@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 
 import { Typography, Button, Form, message, Input, Icon } from "antd";
+import FileUpload from "../../utils/FileUpload";
+import Axios from "axios";
 const { Title } = Typography;
 const { TextArea } = Input;
 
@@ -13,12 +15,13 @@ const Continents = [
   { key: 6, value: "Australia" },
   { key: 7, value: "Antarctica" },
 ];
-export default function UploadProductPage() {
+export default function UploadProductPage(props) {
 
     const [TitleValue, setTitleValue] = useState("");
     const [DescriptionValue, setDescriptionValue] = useState("");
     const [PriceValue, setPriceValue] = useState(0);
     const [ContinentValue, setContinentValue] = useState(1);
+    const [Images, setImages] = useState([]);
 
     const onTitleChange = (event) => {
       setTitleValue(event.currentTarget.value);
@@ -36,8 +39,42 @@ export default function UploadProductPage() {
       setContinentValue(event.currentTarget.value);
     };
 
+    const updateImages = (newImages) => {
+      setImages(newImages);
+      console.log(newImages + "heyyy");
+    };
+
     const onSubmit = (event) => {
       event.preventDefault();
+
+
+        if (
+          !TitleValue ||
+          !DescriptionValue ||
+          !PriceValue ||
+          !ContinentValue ||
+          !Images
+        ) {
+          return alert("fill all the fields first!");
+        }
+        const variables = {
+          writer: props.user.userData._id,
+          title: TitleValue,
+          description: DescriptionValue,
+          price: PriceValue,
+          images: Images,
+          continents: ContinentValue,
+        };
+
+        Axios.post("/api/product/uploadProduct", variables).then((response) => {
+          if (response.data.success) {
+            alert("Product Successfully Uploaded");
+            props.history.push("/");
+          } else {
+            alert("Failed to upload Product");
+          }
+        });
+
     };
 
     return (
@@ -48,6 +85,7 @@ export default function UploadProductPage() {
 
         <Form onSubmit={onSubmit}>
           {/* DropZone */}
+          <FileUpload refreshFunction={updateImages} />
           <br />
           <br />
           <label>Title</label>

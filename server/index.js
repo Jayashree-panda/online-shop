@@ -6,7 +6,7 @@ const cors = require('cors')
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 
-const config = require("./config/dev");
+const config = require("./config/key");
 
 // const mongoose = require("mongoose");
 // mongoose
@@ -32,13 +32,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // support parsing of application/json type post data
 app.use(bodyParser.json());
 app.use(cookieParser());
-
+//app.use(express.static(path.join(__dirname, "public")));
+//app.use(express.static("uploads"));
 app.use('/api/users', require('./routes/users'));
-
+app.use("/api/product", require("./routes/product"));
+app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 
 //use this to show the image you have in node js server to client (react js)
 //https://stackoverflow.com/questions/48914987/send-image-path-from-node-js-express-server-to-react-client
-app.use('/uploads', express.static('uploads'));
+//app.use(express.static(path.join(__dirname, "uploads")));
 
 // Serve static assets if in production
 if (process.env.NODE_ENV === "production") {
