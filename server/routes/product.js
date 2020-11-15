@@ -5,6 +5,7 @@ const { User } = require("../models/User");
 const multer = require("multer");
 const { auth } = require("../middleware/auth");
 const path = require("path");
+const { Product } = require("../models/Product");
 
 //=================================
 //             User
@@ -45,6 +46,17 @@ router.post("/uploadImage", auth, (req, res) => {
         fileName: res.req.file.filename,
       });
     });
+});
+
+router.post("/uploadProduct", auth, (req, res) => {
+  //save all the data we got from client into the database
+  const product = new Product(req.body);
+
+  product.save((err)=>{
+    if(err) return res.status(400).json({success:false, err})
+    return res.status(200).json({success:true})
+  })
+  
 });
 
 module.exports = router;
